@@ -17,6 +17,8 @@ class ToDo extends React.Component {
     checkedTasks: new Set(),
     isOpenAddModal: false,
     isOpenDeleteModal: false,
+    isOpenHandleDeleteModal: false,
+    deletedTask: new Set(),
   };
 
   inputOnChange = (e) => {
@@ -47,14 +49,10 @@ class ToDo extends React.Component {
 
     const obj = {};
     Object.keys(inputValue).forEach((name) => {
-      console.log(inputValue[name]);
       obj[name] = inputValue[name];
       obj.id = idGeneretor();
     });
 
-    // const isTitleDescription = Object.keys(obj).find(   Eroi hamar
-    //   (i) => i === "title" || i === "description"
-    // );
     if (!obj.title && !obj.description) return;
     tasks.push(obj);
 
@@ -68,10 +66,17 @@ class ToDo extends React.Component {
 
   handleDeleteTask = (id) => {
     let tasks = this.state.tasks;
-    tasks = tasks.filter((task) => task.id !== id);
+    let checkedTasks = this.state.checkedTasks;
+    tasks.map((item) => {
+      if (item.id === id) {
+        tasks.splice(tasks.indexOf(item), 1);
+      }
+    });
+
     this.setState({
       ...this.state,
       tasks,
+      checkedTasks,
     });
   };
 
@@ -87,9 +92,10 @@ class ToDo extends React.Component {
       checkedTasks,
     });
   };
+
   handleDeleteAllTasks = () => {
     let { tasks, checkedTasks } = this.state;
-    // tasks = tasks.filter((task) => task.id !== checkedTasks.has(task.id));
+
     checkedTasks = Array.from(checkedTasks);
     tasks = checkedTasks.reduce(
       (acc, checkedTask) => acc.filter((task) => task.id !== checkedTask),
@@ -117,13 +123,27 @@ class ToDo extends React.Component {
     });
   };
 
-  handleOpenModal = (modalName) => {
+  handleOpenModal = (modalName, id) => {
+    let tasks = this.state.tasks;
+    let deletedTask = this.state.deletedTask;
+    tasks.map((item) => {
+      if (item.id === id) {
+        deletedTask.add(id);
+      }
+    });
     this.setState({
       ...this.state,
       [modalName]: true,
     });
   };
   onHide = (modalName) => {
+    let tasks = this.state.tasks;
+    let deletedTask = this.state.deletedTask;
+    tasks.map((item) => {
+      if (deletedTask.has(item.id)) {
+        deletedTask.delete(item.id);
+      }
+    });
     this.setState({
       ...this.state,
       [modalName]: false,
@@ -131,7 +151,7 @@ class ToDo extends React.Component {
   };
   render() {
     const { inputValue, tasks, checkedTasks, isOpenDeleteModal } = this.state;
-    console.log(inputValue);
+
     return (
       <div>
         <h1
@@ -151,11 +171,21 @@ class ToDo extends React.Component {
           inputValue={inputValue}
           isOpenAddModal={this.state.isOpenAddModal}
         />
-        <DeleteModal
-          isOpenDeleteModal={isOpenDeleteModal}
-          onHide={this.onHide}
-          handleDeleteAllTasks={this.handleDeleteAllTasks}
-        />
+        {tasks.map((item) => {
+          return (
+            <DeleteModal
+              isOpenDeleteModal={isOpenDeleteModal}
+              onHide={this.onHide}
+              handleDeleteAllTasks={this.handleDeleteAllTasks}
+              checkedTasks={checkedTasks}
+              count={checkedTasks.size}
+              task={item}
+              handleDeleteTask={this.handleDeleteTask}
+              deletedTask={this.state.deletedTask}
+              isOpenHandleDeleteModal={this.state.isOpenHandleDeleteModal}
+            />
+          );
+        })}
         <div className={Styles.TasksContainer}>
           {tasks.map((item, index) => {
             return (
@@ -165,6 +195,7 @@ class ToDo extends React.Component {
                 handleDeleteTask={this.handleDeleteTask}
                 handleOnChange={this.handleOnChange}
                 checkedTasks={checkedTasks}
+                handleOpenModal={this.handleOpenModal}
               />
             );
           })}

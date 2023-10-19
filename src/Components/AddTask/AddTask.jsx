@@ -1,4 +1,3 @@
-import Styles from "./styles.module.css";
 import React from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -8,7 +7,7 @@ function AddTask(props) {
   return (
     <Modal
       show={props.isOpenAddModal}
-      onHide={()=> props.onHide("isOpenAddModal")}
+      onHide={() => props.onHide("isOpenAddModal")}
       aria-labelledby="contained-modal-title-vcenter"
     >
       <Modal.Header closeButton>
@@ -37,7 +36,10 @@ function AddTask(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={()=> props.onHide("isOpenAddModal")}>
+        <Button
+          variant="secondary"
+          onClick={() => props.onHide("isOpenAddModal")}
+        >
           Close
         </Button>
         <Button variant="primary" onClick={props.submit}>

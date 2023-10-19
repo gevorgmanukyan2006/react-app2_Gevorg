@@ -3,7 +3,7 @@ import deleteIcon from "../../icons/delete.svg";
 import editIcon from "../../icons/edit.svg";
 
 const Task = (props) => {
-  const { handleDeleteTask, task, handleOnChange, checkedTasks } = props;
+  const { task, handleOnChange, checkedTasks, handleOpenModal } = props;
   return (
     <div className={Styles.task}>
       <div>
@@ -17,7 +17,7 @@ const Task = (props) => {
       </div>
       <div className={Styles.iconsContainer}>
         <button
-          onClick={() => handleDeleteTask(task.id)}
+          onClick={() => handleOpenModal("isOpenHandleDeleteModal", task.id)}
           disabled={checkedTasks.has(task.id)}
         >
           <img src={deleteIcon} alt="delete" />
