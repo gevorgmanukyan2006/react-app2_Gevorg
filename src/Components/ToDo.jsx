@@ -66,7 +66,7 @@ class ToDo extends React.Component {
 
   handleDeleteTask = (id) => {
     let tasks = this.state.tasks;
-    let checkedTasks = this.state.checkedTasks;
+
     tasks.map((item) => {
       if (item.id === id) {
         tasks.splice(tasks.indexOf(item), 1);
@@ -76,7 +76,6 @@ class ToDo extends React.Component {
     this.setState({
       ...this.state,
       tasks,
-      checkedTasks,
     });
   };
 
@@ -124,13 +123,10 @@ class ToDo extends React.Component {
   };
 
   handleOpenModal = (modalName, id) => {
-    let tasks = this.state.tasks;
     let deletedTask = this.state.deletedTask;
-    tasks.map((item) => {
-      if (item.id === id) {
-        deletedTask.add(id);
-      }
-    });
+
+    deletedTask.add(id);
+
     this.setState({
       ...this.state,
       [modalName]: true,
@@ -140,9 +136,7 @@ class ToDo extends React.Component {
     let tasks = this.state.tasks;
     let deletedTask = this.state.deletedTask;
     tasks.map((item) => {
-      if (deletedTask.has(item.id)) {
-        deletedTask.delete(item.id);
-      }
+      deletedTask.delete(item.id);
     });
     this.setState({
       ...this.state,
